@@ -4,7 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    tools:context=".EditProfil">
+    tools:context=".EditProfile">
 
 
     <ScrollView
@@ -55,51 +55,141 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="46dp"
-                android:orientation="horizontal">
+                android:layout_height="wrap_content">
 
-                <EditText
-                    android:id="@+id/change_name"
+                <com.google.android.material.textfield.TextInputLayout
                     android:layout_width="match_parent"
-                    android:layout_height="86dp"
-                    android:gravity="start"
-                    android:hint="Name"
-                    android:textAlignment="textStart"
-                    android:textSize="18sp"
-                    android:textStyle="bold|italic" />
+                    android:layout_height="wrap_content"
+                    android:hint="first name">
 
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/edit_first_name"
+                        android:layout_width="match_parent"
+                        android:layout_height="86dp"
+                        android:gravity="start"
+                        android:textAlignment="textStart"
+                        android:textSize="18sp"
+                        android:textStyle="bold|italic" />
+
+                </com.google.android.material.textfield.TextInputLayout>
             </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="last name">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/edit_last_name"
+                        android:layout_width="match_parent"
+                        android:layout_height="86dp"
+                        android:gravity="start"
+                        android:textAlignment="textStart"
+                        android:textSize="18sp"
+                        android:textStyle="bold|italic" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="phone number">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/edit_phone"
+                        android:layout_width="match_parent"
+                        android:layout_height="86dp"
+                        android:gravity="start"
+                        android:textAlignment="textStart"
+                        android:textSize="18sp"
+                        android:textStyle="bold|italic" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+            </LinearLayout>
+
+<!--            <LinearLayout-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="46dp"-->
+<!--                android:orientation="horizontal">-->
+
+<!--                <EditText-->
+<!--                    android:id="@+id/edit_first_name"-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="86dp"-->
+<!--                    android:gravity="start"-->
+<!--                    android:hint="First name"-->
+<!--                    android:textAlignment="textStart"-->
+<!--                    android:textSize="18sp"-->
+<!--                    android:textStyle="bold|italic" />-->
+
+<!--            </LinearLayout>-->
+<!--            <LinearLayout-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="46dp"-->
+<!--                android:orientation="horizontal">-->
+
+<!--                <EditText-->
+<!--                    android:id="@+id/edit_last_name"-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="86dp"-->
+<!--                    android:gravity="start"-->
+<!--                    android:hint="Last name"-->
+<!--                    android:textAlignment="textStart"-->
+<!--                    android:textSize="18sp"-->
+<!--                    android:textStyle="bold|italic" />-->
+
+<!--            </LinearLayout>-->
+
+<!--            <LinearLayout-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="46dp"-->
+<!--                android:orientation="horizontal">-->
+
+<!--                <EditText-->
+<!--                    android:id="@+id/changephone"-->
+<!--                    android:layout_width="277dp"-->
+<!--                    android:layout_height="match_parent"-->
+<!--                    android:layout_weight="1"-->
+<!--                    android:gravity="start"-->
+<!--                    android:hint="Phone number"-->
+<!--                    android:textAlignment="textStart"-->
+<!--                    android:textSize="18sp"-->
+<!--                    android:textStyle="bold|italic" />-->
+
+<!--            </LinearLayout>-->
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="46dp"
                 android:orientation="horizontal">
 
-                <EditText
-                    android:id="@+id/change_phone"
-                    android:layout_width="277dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:gravity="start"
-                    android:hint="Phone number"
-                    android:textAlignment="textStart"
-                    android:textSize="18sp"
-                    android:textStyle="bold|italic" />
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="46dp"
-                android:orientation="horizontal">
-
             </LinearLayout>
 
 
+            <Spinner
+                android:id="@+id/spinner_regions"
+                android:layout_width="150dp"
+                android:layout_height="39dp"
+                android:text="region"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.015"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.571" />
 
             <Space
                 android:layout_width="match_parent"
-                android:layout_height="21dp" />
+                android:layout_height="31dp" />
 
             <Button
                 android:id="@+id/btn_back"
@@ -110,17 +200,17 @@
 
 
         </LinearLayout>
-        <!--        <Spinner-->
-        <!--            android:id="@+id/spineradress"-->
-        <!--            android:layout_width="160dp"-->
-        <!--            android:layout_height="50dp"-->
-        <!--            android:text="Work"-->
-        <!--            app:layout_constraintBottom_toBottomOf="parent"-->
-        <!--            app:layout_constraintEnd_toEndOf="parent"-->
-        <!--            app:layout_constraintHorizontal_bias="0.394"-->
-        <!--            app:layout_constraintStart_toStartOf="parent"-->
-        <!--            app:layout_constraintTop_toTopOf="parent"-->
-        <!--            app:layout_constraintVertical_bias="0.694" />-->
+<!--        <Spinner-->
+<!--            android:id="@+id/spineradress"-->
+<!--            android:layout_width="160dp"-->
+<!--            android:layout_height="50dp"-->
+<!--            android:text="Work"-->
+<!--            app:layout_constraintBottom_toBottomOf="parent"-->
+<!--            app:layout_constraintEnd_toEndOf="parent"-->
+<!--            app:layout_constraintHorizontal_bias="0.394"-->
+<!--            app:layout_constraintStart_toStartOf="parent"-->
+<!--            app:layout_constraintTop_toTopOf="parent"-->
+<!--            app:layout_constraintVertical_bias="0.694" />-->
 
     </ScrollView>
 

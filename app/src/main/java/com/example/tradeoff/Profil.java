@@ -3,15 +3,10 @@ package com.example.tradeoff;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Color;
-import android.net.Uri;
 import android.os.Bundle;
-import android.provider.MediaStore;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -27,10 +22,6 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
-
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
 
 public class Profil extends AppCompatActivity {
     public static final int RESULT_LOAD_IMG = 1;
@@ -120,7 +111,7 @@ public class Profil extends AppCompatActivity {
     }
 
     public void EditProfil(View view) {
-        startActivity(new Intent(Profil.this, EditProfil.class));
+        startActivity(new Intent(Profil.this, EditProfile.class));
     }
 
 

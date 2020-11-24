@@ -2,4 +2,29 @@
 <resources>
     <string name="email" />
     <string name="app_name">TradeOff</string>
+
+    <string-array name="regions_array">
+        <item>North</item>
+        <item>Haifa</item>
+        <item>Tel-Aviv</item>
+        <item>Center</item>
+        <item>Jerusalem</item>
+        <item>South</item>
+        <item>Shomron</item>
+        <item>Binyamin</item>
+    </string-array>
+
+    <string-array name="activities_array">
+        <item>House repair</item>
+        <item>House keeping</item>
+        <item>Private lesson</item>
+        <item>Plumbing</item>
+        <item>Gardening</item>
+        <item>Private lesson</item>
+        <item>Computer assistance"</item>
+        <item>Phone assistance</item>
+        <item>Administrative assistance</item>
+        <item>Help Transport</item>
+        <item>Other</item>
+    </string-array>
 </resources>

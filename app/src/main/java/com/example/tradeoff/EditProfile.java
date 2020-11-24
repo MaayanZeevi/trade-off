@@ -1,10 +1,14 @@
 package com.example.tradeoff;
 
 import androidx.appcompat.app.AppCompatActivity;
+
 import android.os.Bundle;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.google.android.material.textfield.TextInputEditText;
@@ -13,13 +17,20 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
-public class EditProfile extends AppCompatActivity {
+public class EditProfile extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
 
-    private Button saveButton;
-    private EditText newLastName,newFirstName,newphone;
-    private DatabaseReference UsersRef;
+    private Button save;
+    private TextInputEditText newFirstName, newLastName;
+    private EditText newPhone;
+    private DatabaseReference usersReference;
     private FirebaseUser current_user;
-    String empty="";
+//        String[] regions = getResources().getStringArray(R.array.regions_array);
+    String[] regions= {
+                            "North", "Haifa", "Tel-Aviv", "Center", "Jerusalem",
+                                    "South", "Shomron", "Binyamin"
+                        };
+    String selectedRegion;
+    String identifier = "";
 
 
     @Override
@@ -27,42 +38,52 @@ public class EditProfile extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_profile);
 
-        newLastName = findViewById(R.id.edit_last_name);
         newFirstName = findViewById(R.id.edit_first_name);
-        newphone = findViewById(R.id.change_phone);
+        newLastName = findViewById(R.id.edit_last_name);
+        newPhone = findViewById(R.id.edit_phone);
+        Spinner spinnerRegions = findViewById(R.id.spinner_regions);
+        spinnerRegions.setOnItemSelectedListener(this);
+        ArrayAdapter adapter
+                = new ArrayAdapter(
+                this,
+                android.R.layout.simple_spinner_item,
+                regions);
 
+        spinnerRegions.setAdapter(adapter);
+
+        final String finalEmpty = identifier;
 
         current_user = FirebaseAuth.getInstance().getCurrentUser();
-        String s = current_user.getEmail().toString().trim();
+        String email = current_user.getEmail().toString().trim();
+        identifier = email.replaceAll("\\.", "_");
+//        for(int i=0 ; i<email.length(); i ++){
+//            if(email.charAt(i)!='.'){
+//                empty+=email.charAt(i);
+//            }else{
+//                empty+='_';
+//            }
+//        }
+        usersReference = FirebaseDatabase.getInstance().getReference().child("User").child(identifier);
 
-        for(int i=0 ; i<s.length(); i ++){
-            if(s.charAt(i)!='.'){
-                empty+=s.charAt(i);
-            }else{
-                empty+='_';
-            }
-        }
-        UsersRef =  FirebaseDatabase.getInstance().getReference().child("User").child(empty);
+        save = (Button) findViewById(R.id.btn_back);
 
-        saveButton = (Button)findViewById(R.id.btn_back);
-
-
-        final String finalEmpty = empty;
-        saveButton.setOnClickListener(new View.OnClickListener() {
+        save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                final String changeLastName = newLastName.getText().toString();
-                final String changeFirstName = newFirstName.getText().toString();
-                final String changedphone = newphone.getText().toString();
+                final String changeFirstname = newFirstName.getText().toString();
+                final String changeLastname = newLastName.getText().toString();
+
+                final String changedphone = newPhone.getText().toString();
 
 
-                if (changeLastName.isEmpty()==false){
-                    UsersRef.child("lname").setValue(changeLastName);
+                if (changeFirstname.isEmpty() == false) {
+                    usersReference.child("fname").setValue(changeFirstname);
                 }
-                if (changeFirstName.isEmpty()==false){
-                    UsersRef.child("fname").setValue(changeFirstName);
+                if (changeLastname.isEmpty() == false) {
+                    usersReference.child("lname").setValue(changeLastname);
                 }
-                if (changedphone.isEmpty()==false) {
+
+                if (changedphone.isEmpty() == false) {
                     if (changedphone.length() != 10) {
                         Toast.makeText(EditProfile.this, "NotValidPhone", Toast.LENGTH_LONG).show();
                         return;
@@ -75,13 +96,30 @@ public class EditProfile extends AppCompatActivity {
                         Toast.makeText(EditProfile.this, "NotValidPhone", Toast.LENGTH_LONG).show();
                         return;
                     }
-                    UsersRef.child("phone").setValue(changedphone);
-                }
+                    usersReference.child("phone").setValue(changedphone);
 
+                }
+                usersReference.child("adress").setValue(selectedRegion);
 
                 finish();
             }
         });
     }
 
+    @Override
+    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+
+
+        Spinner spinner = (Spinner)parent;
+        if(spinner.getId() == R.id.spinner_regions)
+        {
+            selectedRegion=regions[position];
+        }
+
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> parent) {
+
+    }
 }
