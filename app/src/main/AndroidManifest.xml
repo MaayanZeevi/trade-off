@@ -13,7 +13,9 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name=".Search"></activity>
-        <activity android:name=".EditProfile"></activity>
+        <activity android:name=".EditProfile"
+            android:icon="@drawable/ic_pencil"
+            android:label="Edit Profile"></activity>
         <activity android:name=".Profil" />
         <activity android:name=".CreatePost" />
         <activity android:name=".Home" />

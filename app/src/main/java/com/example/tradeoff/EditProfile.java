@@ -1,7 +1,10 @@
 package com.example.tradeoff;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
@@ -11,36 +14,37 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
 
-import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.OnProgressListener;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
+
+import static com.example.tradeoff.Profil.RESULT_LOAD_IMG;
 
 public class EditProfile extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
 
     private Button save;
-    private TextInputEditText newFirstName, newLastName;
-    private EditText newPhone;
-    private DatabaseReference usersReference;
+    private EditText newFirstName,newLastName, newPhone;
+    private DatabaseReference UsersRef;
     private FirebaseUser current_user;
-//        String[] regions = getResources().getStringArray(R.array.regions_array);
-    String[] regions= {
-                            "North", "Haifa", "Tel-Aviv", "Center", "Jerusalem",
-                                    "South", "Shomron", "Binyamin"
-                        };
+    String[] regions;
     String selectedRegion;
-    String identifier = "";
-
-
+    String empty="";
+    Uri imageUri;
+    FirebaseStorage storage;
+    StorageReference storageReference;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_profile);
 
-        newFirstName = findViewById(R.id.edit_first_name);
-        newLastName = findViewById(R.id.edit_last_name);
-        newPhone = findViewById(R.id.edit_phone);
+        regions = getResources().getStringArray(R.array.regions_array);
         Spinner spinnerRegions = findViewById(R.id.spinner_regions);
         spinnerRegions.setOnItemSelectedListener(this);
         ArrayAdapter adapter
@@ -51,22 +55,30 @@ public class EditProfile extends AppCompatActivity implements AdapterView.OnItem
 
         spinnerRegions.setAdapter(adapter);
 
-        final String finalEmpty = identifier;
+        storage = FirebaseStorage.getInstance();
+        storageReference = storage.getReference();
+
+        newFirstName = findViewById(R.id.edit_first_name);
+        newPhone = findViewById(R.id.edit_phone);
+        newLastName = findViewById(R.id.edit_last_name);
+
 
         current_user = FirebaseAuth.getInstance().getCurrentUser();
-        String email = current_user.getEmail().toString().trim();
-        identifier = email.replaceAll("\\.", "_");
-//        for(int i=0 ; i<email.length(); i ++){
-//            if(email.charAt(i)!='.'){
-//                empty+=email.charAt(i);
-//            }else{
-//                empty+='_';
-//            }
-//        }
-        usersReference = FirebaseDatabase.getInstance().getReference().child("User").child(identifier);
+        String s = current_user.getEmail().toString().trim();
 
-        save = (Button) findViewById(R.id.btn_back);
+        for(int i=0 ; i<s.length(); i ++){
+            if(s.charAt(i)!='.'){
+                empty+=s.charAt(i);
+            }else{
+                empty+='_';
+            }
+        }
+        UsersRef =  FirebaseDatabase.getInstance().getReference().child("User").child(empty);
 
+        save = (Button)findViewById(R.id.btn_save_profile_changes);
+
+
+        final String finalEmpty = empty;
         save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -77,13 +89,13 @@ public class EditProfile extends AppCompatActivity implements AdapterView.OnItem
 
 
                 if (changeFirstname.isEmpty() == false) {
-                    usersReference.child("fname").setValue(changeFirstname);
+                    UsersRef.child("fname").setValue(changeFirstname);
                 }
                 if (changeLastname.isEmpty() == false) {
-                    usersReference.child("lname").setValue(changeLastname);
+                    UsersRef.child("lname").setValue(changeLastname);
                 }
 
-                if (changedphone.isEmpty() == false) {
+                if (changedphone.isEmpty()==false) {
                     if (changedphone.length() != 10) {
                         Toast.makeText(EditProfile.this, "NotValidPhone", Toast.LENGTH_LONG).show();
                         return;
@@ -96,20 +108,84 @@ public class EditProfile extends AppCompatActivity implements AdapterView.OnItem
                         Toast.makeText(EditProfile.this, "NotValidPhone", Toast.LENGTH_LONG).show();
                         return;
                     }
-                    usersReference.child("phone").setValue(changedphone);
-
+                    UsersRef.child("phone").setValue(changedphone);
                 }
-                usersReference.child("adress").setValue(selectedRegion);
-
-                finish();
+                UsersRef.child("adress").setValue(selectedRegion);
+                Intent act= new Intent(new Intent(EditProfile.this,Profil.class));
+                act.putExtra("email",empty);
+                startActivity(act);// Write was successful!
             }
         });
     }
 
+    public void change_image(View view) {
+
+        //פותח את הגלריה בפלאפון ומנסה לעלות תמונה
+        Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
+        photoPickerIntent.setType("image/*");
+        startActivityForResult(photoPickerIntent, RESULT_LOAD_IMG);
+    }
+    @Override
+    protected void onActivityResult(int reqCode, int resultCode, Intent data) {
+        super.onActivityResult(reqCode, resultCode, data);
+
+        if (resultCode == RESULT_OK) {
+            // מה אני עושה עם התמונה הזאת
+            imageUri= data.getData();
+            uploadImage();
+
+        }
+    }
+    // UploadImage method
+    private void uploadImage()
+    {
+        if (imageUri != null) {
+            // Defining the child of storageReference
+            StorageReference ref = storageReference.child("images/");
+
+            // adding listeners on upload
+            // or failure of image
+            ref.child("User").child(empty).putFile(imageUri)
+                    .addOnSuccessListener(
+                            new OnSuccessListener<UploadTask.TaskSnapshot>() {
+
+                                @Override
+                                public void onSuccess(
+                                        UploadTask.TaskSnapshot taskSnapshot)
+                                {
+                                    // Image uploaded successfully
+                                    Toast.makeText(EditProfile.this, "Image Uploaded!!", Toast.LENGTH_SHORT).show();
+                                }
+                            })
+
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e)
+                        {
+                            // Error, Image not uploaded
+                            Toast.makeText(EditProfile.this, "Failed " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                        }
+                    })
+                    .addOnProgressListener(
+                            new OnProgressListener<UploadTask.TaskSnapshot>() {
+
+                                // Progress Listener for loading
+                                // percentage on the dialog box
+                                @Override
+                                public void onProgress(
+                                        UploadTask.TaskSnapshot taskSnapshot)
+                                {
+                                    double progress
+                                            = (100.0
+                                            * taskSnapshot.getBytesTransferred()
+                                            / taskSnapshot.getTotalByteCount());
+                                }
+                            });
+        }
+    }
+
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-
-
         Spinner spinner = (Spinner)parent;
         if(spinner.getId() == R.id.spinner_regions)
         {
